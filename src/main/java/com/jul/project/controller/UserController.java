@@ -14,7 +14,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/")
+    @PostMapping("")
     public GetUserVo createUser(@RequestBody CreateUserVo createUserVo) {
         return userService.createUser(createUserVo);
     }
@@ -24,12 +24,12 @@ public class UserController {
         return userService.getUser(userNid);
     }
 
-    @PostMapping("/update")
+    @PutMapping("")
     public GetUserVo updateUser(@RequestBody UpdateUserVo updateUserVo) {
         return userService.updateUser(updateUserVo);
     }
 
-    @GetMapping("/delete/{userNid}")
+    @DeleteMapping("/delete/{userNid}")
     public String deleteUser(@PathVariable Long userNid) {
         return userService.deleteUser(userNid);
     }

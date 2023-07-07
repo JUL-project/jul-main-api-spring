@@ -25,12 +25,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userNid).orElseThrow(
                 () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
         );
-        // old
-//        GetUserVo vo = new GetUserVo(user);
-//        vo.setUserId(user.getUserId());
-//        vo.setUseYn(user.getUseYn());
-//        vo.setCreateDtm(user.getCreateDtm());
-//        vo.setUpdateDtm(user.getUpdateDtm());
         return new GetUserVo(user);
     }
 
@@ -40,7 +34,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GetUserVo createUser(CreateUserVo createUserVo) {
-        // need userid duplicate check
         if(checkUserIdDuplicate(createUserVo.getUserId())) {
             // TODO
             return null;
@@ -48,17 +41,10 @@ public class UserServiceImpl implements UserService {
         User user = new User(createUserVo);
         userRepository.saveAndFlush(user);
         return new GetUserVo(user);
-        // old
-//        User user = new User();
-//        user.setUserId(createUserVo.getUserId());
-//        user.setPassword(createUserVo.getPassword());
-//        user.setUseYn("Y");
-//        return getUser(userRepository.save(user).getUserNid());
     }
 
     @Override
     public GetUserVo updateUser(UpdateUserVo updateUserVo) {
-        // refactoring
         userRepository.findById(updateUserVo.getUserNid())
                 .map(user -> {
                     user.setPassword(updateUserVo.getPassword());
@@ -67,13 +53,6 @@ public class UserServiceImpl implements UserService {
                         () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
                 );
         return getUser(updateUserVo.getUserNid());
-
-        //old
-//        User user = userRepository.findById(updateUserVo.getUserNid()).orElseThrow(
-//                () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
-//        );
-//        user.setPassword(updateUserVo.getPassword());
-//        return getUser(userRepository.save(user).getUserNid());
     }
 
     @Override
@@ -81,6 +60,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userNid).orElseThrow(
                 () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
         );
+        if (user.getUseYn().equals("N")) {
+            return "already deleted user";
+        }
         user.setUseYn("N");
         userRepository.save(user);
         return "success";

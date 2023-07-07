@@ -18,6 +18,7 @@ public class User {
     private Long userNid;
     private String userId;
     private String password;
+    @Column(insertable = false)
     private String useYn;
     @Column(insertable = false, updatable = false)
     private LocalDateTime createDtm;

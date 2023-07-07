@@ -3,7 +3,9 @@ package com.jul.project.service.impl;
 import com.jul.project.common.enums.CustomErrorCode;
 import com.jul.project.common.exception.CustomException;
 import com.jul.project.model.User;
+import com.jul.project.model.vo.CreateUserVo;
 import com.jul.project.model.vo.GetUserVo;
+import com.jul.project.model.vo.UpdateUserVo;
 import com.jul.project.repository.UserRepository;
 import com.jul.project.service.UserService;
 import jakarta.transaction.Transactional;
@@ -31,17 +33,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser() {
-        return null;
+    public GetUserVo createUser(CreateUserVo createUserVo) {
+        // need userid duplicate check
+        User user = new User();
+        user.setUserId(createUserVo.getUserId());
+        user.setPassword(createUserVo.getPassword());
+        user.setUseYn("Y");
+        return getUser(userRepository.save(user).getUserNid());
     }
 
     @Override
-    public User updateUser() {
-        return null;
+    public GetUserVo updateUser(UpdateUserVo updateUserVo) {
+        User user = userRepository.findById(updateUserVo.getUserNid()).orElseThrow(
+                () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
+        );
+        user.setPassword(updateUserVo.getPassword());
+        return getUser(userRepository.save(user).getUserNid());
     }
 
     @Override
-    public String deleteUser() {
-        return null;
+    public String deleteUser(Long userNid) {
+        User user = userRepository.findById(userNid).orElseThrow(
+                () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
+        );
+        user.setUseYn("N");
+        userRepository.save(user);
+        return "N";
     }
 }

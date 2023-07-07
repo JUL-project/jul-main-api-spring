@@ -1,16 +1,17 @@
 package com.jul.project.service;
 
-import com.jul.project.model.User;
+import com.jul.project.model.vo.CreateUserVo;
 import com.jul.project.model.vo.GetUserVo;
+import com.jul.project.model.vo.UpdateUserVo;
 
 public interface UserService {
 
     GetUserVo getUser(Long userNid);
 
-    User createUser();
+    GetUserVo createUser(CreateUserVo createUserVo);
 
-    User updateUser();
+    GetUserVo updateUser(UpdateUserVo updateUserVo);
 
-    String deleteUser();
+    String deleteUser(Long userNid);
 
 }

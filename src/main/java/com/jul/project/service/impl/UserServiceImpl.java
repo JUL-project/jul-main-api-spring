@@ -10,6 +10,7 @@ import com.jul.project.repository.UserRepository;
 import com.jul.project.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,31 +25,55 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userNid).orElseThrow(
                 () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
         );
-        GetUserVo vo = new GetUserVo();
-        vo.setUserId(user.getUserId());
-        vo.setUseYn(user.getUseYn());
-        vo.setCreateDtm(user.getCreateDtm());
-        vo.setUpdateDtm(user.getUpdateDtm());
-        return vo;
+        // old
+//        GetUserVo vo = new GetUserVo(user);
+//        vo.setUserId(user.getUserId());
+//        vo.setUseYn(user.getUseYn());
+//        vo.setCreateDtm(user.getCreateDtm());
+//        vo.setUpdateDtm(user.getUpdateDtm());
+        return new GetUserVo(user);
+    }
+
+    public boolean checkUserIdDuplicate(String userId) {
+        return userRepository.existsByUserId(userId);
     }
 
     @Override
     public GetUserVo createUser(CreateUserVo createUserVo) {
         // need userid duplicate check
-        User user = new User();
-        user.setUserId(createUserVo.getUserId());
-        user.setPassword(createUserVo.getPassword());
-        user.setUseYn("Y");
-        return getUser(userRepository.save(user).getUserNid());
+        if(checkUserIdDuplicate(createUserVo.getUserId())) {
+            // TODO
+            return null;
+        }
+        User user = new User(createUserVo);
+        userRepository.saveAndFlush(user);
+        return new GetUserVo(user);
+        // old
+//        User user = new User();
+//        user.setUserId(createUserVo.getUserId());
+//        user.setPassword(createUserVo.getPassword());
+//        user.setUseYn("Y");
+//        return getUser(userRepository.save(user).getUserNid());
     }
 
     @Override
     public GetUserVo updateUser(UpdateUserVo updateUserVo) {
-        User user = userRepository.findById(updateUserVo.getUserNid()).orElseThrow(
-                () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
-        );
-        user.setPassword(updateUserVo.getPassword());
-        return getUser(userRepository.save(user).getUserNid());
+        // refactoring
+        userRepository.findById(updateUserVo.getUserNid())
+                .map(user -> {
+                    user.setPassword(updateUserVo.getPassword());
+                    return userRepository.saveAndFlush(user);
+                }).orElseThrow(
+                        () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
+                );
+        return getUser(updateUserVo.getUserNid());
+
+        //old
+//        User user = userRepository.findById(updateUserVo.getUserNid()).orElseThrow(
+//                () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
+//        );
+//        user.setPassword(updateUserVo.getPassword());
+//        return getUser(userRepository.save(user).getUserNid());
     }
 
     @Override
@@ -58,6 +83,6 @@ public class UserServiceImpl implements UserService {
         );
         user.setUseYn("N");
         userRepository.save(user);
-        return "N";
+        return "success";
     }
 }

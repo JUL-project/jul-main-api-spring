@@ -1,6 +1,8 @@
 package com.jul.project.model;
 
+import com.jul.project.model.vo.CreateUserVo;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +23,11 @@ public class User {
     private LocalDateTime createDtm;
     @Column(insertable = false, updatable = false)
     private LocalDateTime updateDtm;
+
+    @Builder
+    public User(CreateUserVo vo) {
+        this.userId = vo.getUserId();
+        this.password = vo.getPassword();
+    }
+
 }

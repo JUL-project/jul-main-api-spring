@@ -1,5 +1,7 @@
 package com.jul.project.model.vo;
 
+import com.jul.project.model.User;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
@@ -12,5 +14,13 @@ public class GetUserVo {
     String useYn;
     LocalDateTime createDtm;
     LocalDateTime updateDtm;
+
+    @Builder
+    public GetUserVo(User user) {
+        this.userId = user.getUserId();
+        this.useYn = user.getUseYn();
+        this.createDtm = user.getCreateDtm();
+        this.updateDtm = user.getUpdateDtm();
+    }
 
 }

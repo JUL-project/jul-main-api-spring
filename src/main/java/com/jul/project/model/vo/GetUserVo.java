@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 public class GetUserVo {
 
+    Long userNId;
     String userId;
     String useYn;
     LocalDateTime createDtm;
@@ -17,6 +18,7 @@ public class GetUserVo {
 
     @Builder
     public GetUserVo(User user) {
+        this.userNId = user.getUserNid();
         this.userId = user.getUserId();
         this.useYn = user.getUseYn();
         this.createDtm = user.getCreateDtm();

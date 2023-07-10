@@ -10,7 +10,6 @@ import com.jul.project.repository.UserRepository;
 import com.jul.project.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,8 +34,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public GetUserVo createUser(CreateUserVo createUserVo) {
         if(checkUserIdDuplicate(createUserVo.getUserId())) {
-            // TODO
-            return null;
+            throw new CustomException(CustomErrorCode.DUPLICATE_USER_ERROR);
         }
         User user = new User(createUserVo);
         userRepository.saveAndFlush(user);
@@ -60,9 +58,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userNid).orElseThrow(
                 () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
         );
-        if (user.getUseYn().equals("N")) {
-            return "already deleted user";
-        }
+        if (user.getUseYn().equals("N")) throw new CustomException(CustomErrorCode.ALREADY_DELETED_USER_ERROR);
         user.setUseYn("N");
         userRepository.save(user);
         return "success";

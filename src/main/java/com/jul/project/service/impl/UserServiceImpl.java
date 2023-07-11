@@ -2,6 +2,7 @@ package com.jul.project.service.impl;
 
 import com.jul.project.common.enums.CustomErrorCode;
 import com.jul.project.common.exception.CustomException;
+import com.jul.project.common.response.ResponseVo;
 import com.jul.project.model.User;
 import com.jul.project.model.vo.CreateUserVo;
 import com.jul.project.model.vo.GetUserVo;
@@ -10,7 +11,9 @@ import com.jul.project.repository.UserRepository;
 import com.jul.project.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
 @Service
 @Transactional
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final ModelMapper mapper;
 
     @Override
     public GetUserVo getUser(Long userNid) {
@@ -32,17 +36,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GetUserVo createUser(CreateUserVo createUserVo) {
-        if(checkUserIdDuplicate(createUserVo.getUserId())) {
-            throw new CustomException(CustomErrorCode.DUPLICATE_USER_ERROR);
+    public ResponseVo<?> createUser(CreateUserVo createUserVo) {
+        if (checkUserIdDuplicate(createUserVo.getUserId())) {
+            return ResponseVo.failed("DUPLICATED USER ID", createUserVo);
         }
-        User user = new User(createUserVo);
+        User user = mapper.map(createUserVo, User.class);
         userRepository.saveAndFlush(user);
-        return new GetUserVo(user);
+        return ResponseVo.success("CREATE SUCCESS", user);
     }
 
     @Override
-    public GetUserVo updateUser(UpdateUserVo updateUserVo) {
+    public ResponseVo<?> updateUser(UpdateUserVo updateUserVo) {
         userRepository.findById(updateUserVo.getUserNid())
                 .map(user -> {
                     user.setPassword(updateUserVo.getPassword());
@@ -50,17 +54,17 @@ public class UserServiceImpl implements UserService {
                 }).orElseThrow(
                         () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
                 );
-        return getUser(updateUserVo.getUserNid());
+        return ResponseVo.success("UPDATE SUCCESS", null);
     }
 
     @Override
-    public String deleteUser(Long userNid) {
+    public ResponseVo<?> deleteUser(Long userNid) {
         User user = userRepository.findById(userNid).orElseThrow(
                 () -> new CustomException(CustomErrorCode.USER_NOT_FOUND_ERROR)
         );
         if (user.getUseYn().equals("N")) throw new CustomException(CustomErrorCode.ALREADY_DELETED_USER_ERROR);
         user.setUseYn("N");
         userRepository.save(user);
-        return "success";
+        return ResponseVo.success("DELETE SUCCESS", user.getUseYn());
     }
 }

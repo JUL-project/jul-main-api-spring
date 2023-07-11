@@ -1,5 +1,6 @@
 package com.jul.project.controller;
 
+import com.jul.project.common.response.ResponseVo;
 import com.jul.project.model.vo.CreateUserVo;
 import com.jul.project.model.vo.GetUserVo;
 import com.jul.project.model.vo.UpdateUserVo;
@@ -15,7 +16,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("")
-    public GetUserVo createUser(@RequestBody CreateUserVo createUserVo) {
+    public ResponseVo<?> createUser(@RequestBody CreateUserVo createUserVo) {
         return userService.createUser(createUserVo);
     }
 
@@ -25,12 +26,12 @@ public class UserController {
     }
 
     @PutMapping("")
-    public GetUserVo updateUser(@RequestBody UpdateUserVo updateUserVo) {
+    public ResponseVo<?> updateUser(@RequestBody UpdateUserVo updateUserVo) {
         return userService.updateUser(updateUserVo);
     }
 
     @DeleteMapping("/delete/{userNid}")
-    public String deleteUser(@PathVariable Long userNid) {
+    public ResponseVo<?> deleteUser(@PathVariable Long userNid) {
         return userService.deleteUser(userNid);
     }
 

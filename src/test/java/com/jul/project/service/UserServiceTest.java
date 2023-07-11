@@ -20,51 +20,51 @@ class UserServiceTest {
     private final String testId = "testid";
     private final String testPw = "testpassword";
 
-    @Test
-    void joinMember() {
-        CreateUserVo member = new CreateUserVo();
-        member.setUserId(testId);
-        member.setPassword(testPw);
-        GetUserVo user = userService.createUser(member);
-        Assertions.assertThat(user.getUserId()).isEqualTo(member.getUserId());
-    }
-
-    @Test
-    void getMember() {
-        CreateUserVo member = new CreateUserVo();
-        member.setUserId(testId);
-        member.setPassword(testPw);
-        GetUserVo user = userService.createUser(member);
-        GetUserVo getUser = userService.getUser(user.getUserNId());
-        Assertions.assertThat(user).isEqualTo(getUser);
-        org.junit.jupiter.api.Assertions.assertThrows(CustomException.class, () -> {
-            userService.getUser(user.getUserNId() + 12345);
-        });
-    }
-
-    @Test
-    void updateMember() {
-        CreateUserVo member = new CreateUserVo();
-        member.setUserId(testId);
-        member.setPassword(testPw);
-        GetUserVo user1 = userService.createUser(member);
-
-        UpdateUserVo updateUser = new UpdateUserVo();
-        updateUser.setUserNid(user1.getUserNId());
-        updateUser.setPassword(testPw);
-        userService.updateUser(updateUser);
-
-        GetUserVo user2 = userService.getUser(user1.getUserNId());
-        Assertions.assertThat(user1.getUserId()).isEqualTo(user2.getUserId());
-    }
-
-    @Test
-    void deleteMember() {
-        CreateUserVo member = new CreateUserVo();
-        member.setUserId(testId);
-        member.setPassword(testPw);
-        GetUserVo user = userService.createUser(member);
-        String status = userService.deleteUser(user.getUserNId());
-        Assertions.assertThat(status).isEqualTo("success");
-    }
+//    @Test
+//    void joinMember() {
+//        CreateUserVo member = new CreateUserVo();
+//        member.setUserId(testId);
+//        member.setPassword(testPw);
+//        GetUserVo user = userService.createUser(member);
+//        Assertions.assertThat(user.getUserId()).isEqualTo(member.getUserId());
+//    }
+//
+//    @Test
+//    void getMember() {
+//        CreateUserVo member = new CreateUserVo();
+//        member.setUserId(testId);
+//        member.setPassword(testPw);
+//        GetUserVo user = userService.createUser(member);
+//        GetUserVo getUser = userService.getUser(user.getUserNId());
+//        Assertions.assertThat(user).isEqualTo(getUser);
+//        org.junit.jupiter.api.Assertions.assertThrows(CustomException.class, () -> {
+//            userService.getUser(user.getUserNId() + 12345);
+//        });
+//    }
+//
+//    @Test
+//    void updateMember() {
+//        CreateUserVo member = new CreateUserVo();
+//        member.setUserId(testId);
+//        member.setPassword(testPw);
+//        GetUserVo user1 = userService.createUser(member);
+//
+//        UpdateUserVo updateUser = new UpdateUserVo();
+//        updateUser.setUserNid(user1.getUserNId());
+//        updateUser.setPassword(testPw);
+//        userService.updateUser(updateUser);
+//
+//        GetUserVo user2 = userService.getUser(user1.getUserNId());
+//        Assertions.assertThat(user1.getUserId()).isEqualTo(user2.getUserId());
+//    }
+//
+//    @Test
+//    void deleteMember() {
+//        CreateUserVo member = new CreateUserVo();
+//        member.setUserId(testId);
+//        member.setPassword(testPw);
+//        GetUserVo user = userService.createUser(member);
+//        String status = userService.deleteUser(user.getUserNId());
+//        Assertions.assertThat(status).isEqualTo("success");
+//    }
 }

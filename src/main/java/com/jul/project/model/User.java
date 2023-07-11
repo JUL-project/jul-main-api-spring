@@ -25,10 +25,4 @@ public class User {
     @Column(insertable = false, updatable = false)
     private LocalDateTime updateDtm;
 
-    @Builder
-    public User(CreateUserVo vo) {
-        this.userId = vo.getUserId();
-        this.password = vo.getPassword();
-    }
-
 }

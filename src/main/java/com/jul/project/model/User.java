@@ -16,9 +16,6 @@ public class User {
     private Long userNid;
     private String userId;
     private String password;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "linked_account_nid")
-    private LinkedAccount linkedAccount;
     @Column(insertable = false)
     private String useYn;
     @Column(insertable = false, updatable = false)

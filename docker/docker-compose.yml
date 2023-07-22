@@ -1,18 +1,53 @@
 version: "3"
 services:
+    database:
+        image: mysql
+        container_name: jul-db-mysql
+        environment:
+            - MYSQL_DATABASE=${MYSQL_DB}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_PSWD}
+        ports:
+            - 3308:3306
+        volumes:
+            - /home/jul/dist/volumes/mysql_data:/var/lib/mysql
+            - /home/jul/dist/volumes/mysql_data/conf/conf.d:/etc/mysql/conf.d
+        stdin_open: true
+        tty: true
+        networks:
+            - jul-network
+    redis:
+        image: redis
+        container_name: jul-db-redis
+        environment:
+            - es
+        ports:
+            - 6389:6379
+        volumes:
+            - /home/jul/dist/volumes/redis_data:/data
+            - /home/jul/dist/volumes/redis_data/conf/redis.conf:/usr/local/conf/redis.conf
+        command: redis-server /usr/local/conf/redis.conf
+        depends_on:
+            - database
+        stdin_open: true
+        tty: true
+        networks:
+            - jul-network
+
     application:
-        build: .
+        image: jul-api-spring
         restart: always
         ports:
             - 5000:8080
-        container_name: {{container_name}}
+        container_name: jul-main-spring
         environment:
-            SPRING_DATASOURCE_URL: jdbc:mysql://{{URL:PORT}}/cliff?useSSL=false&allowPublicKeyRetrieval=true
+            SPRING_DATASOURCE_URL: jdbc:mysql://${MYSQL_URL}:${MYSQL_PORT}/${MYSQL_DB}?useSSL=false&allowPublicKeyRetrieval=true
             SPRING_DATASOURCE_DRIVERCLASSNAME: com.mysql.cj.jdbc.Driver
-            SPRING_DATASOURCE_USERNAME: {{USERNAME}}
-            SPRING_DATASOURCE_PASSWORD: {{PASSWORD}}
+            SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+            SPRING_DATASOURCE_PASSWORD: ${MYSQL_PSWD}
+        depends_on:
+            - redis
         networks:
-            - {{network_name}}
+            - jul-network
 
 networks:
-    {{network_name}}:
+    jul-network:

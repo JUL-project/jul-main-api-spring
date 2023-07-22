@@ -1,6 +1,6 @@
 FROM openjdk:17-jdk
 
-ARG JAR_FILE={{JAR_NAME}}.jar
+ARG JAR_FILE=jul-api-main.jar
 
 COPY ${JAR_FILE} app.jar
 
